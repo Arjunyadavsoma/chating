@@ -1,7 +1,10 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+
 android {
+    namespace "com.example.my_webapp"
     compileSdk = 35
-    targetSdk = 35
-    ndkVersion = "27.0.12077973" // already installed
+    ndkVersion = "27.0.12077973" // Optional unless using native C/C++
 
     defaultConfig {
         applicationId = "com.example.my_webapp"
@@ -9,6 +12,7 @@ android {
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
+        multiDexEnabled true
     }
 
     compileOptions {
@@ -20,9 +24,31 @@ android {
         jvmTarget = "11"
     }
 
-    buildTypes {
+    signingConfigs {
+        debug {
+            storeFile file("../debug.keystore")
+            storePassword "android"
+            keyAlias "androiddebugkey"
+            keyPassword "android"
+        }
         release {
-            signingConfig = signingConfigs.getByName("debug")
+            // Use the debug key for release as a placeholder (NOT RECOMMENDED FOR PROD)
+            storeFile file("../debug.keystore")
+            storePassword "android"
+            keyAlias "androiddebugkey"
+            keyPassword "android"
+        }
+    }
+
+    buildTypes {
+        debug {
+            signingConfig signingConfigs.debug
+        }
+        release {
+            signingConfig signingConfigs.release
+            minifyEnabled false
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 }
